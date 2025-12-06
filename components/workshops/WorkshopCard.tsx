@@ -100,7 +100,7 @@ export default function WorkshopCard({ workshop, index }: WorkshopCardProps) {
                         onClick={() => addItem(workshop)}
                         className="bg-gradient-to-r from-[#cba135] to-[#a88225] hover:from-[#b58e2f] hover:to-[#967421] text-white shadow-md hover:shadow-xl transition-all duration-300 px-8 py-6 rounded-full font-serif font-medium tracking-widest text-xs uppercase"
                     >
-                        Book Spot
+                        Book Now
                     </Button>
                 </div>
             </div>

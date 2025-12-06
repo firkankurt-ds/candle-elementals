@@ -45,6 +45,13 @@ export default function ProductCard({ product, index }: ProductCardProps) {
                         {product.description}
                     </p>
 
+                    {/* Premium Exclusivity Note */}
+                    <div className="py-2">
+                        <p className="text-[11px] uppercase tracking-widest text-[#cba135] font-serif border-b border-[#cba135]/20 pb-2 mb-1 inline-block">
+                            Available exclusively through our workshops
+                        </p>
+                    </div>
+
                     {/* Premium Info Badges */}
                     <div className="grid grid-cols-3 gap-2 py-3 border-t border-b border-border/30">
                         {/* Burn Time */}

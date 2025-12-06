@@ -23,7 +23,7 @@ export default function WorkshopsPage() {
 
             {/* FAQ Section */}
             <div className="max-w-4xl mx-auto border-t border-border/40 pt-16">
-                <h2 className="text-3xl font-serif font-bold text-center mb-12">Common Questions</h2>
+                <h2 className="text-3xl font-serif font-bold text-center mb-12">Frequently Asked Questions</h2>
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     <div className="bg-white/50 p-6 rounded-xl border border-border/40 shadow-sm hover:shadow-md transition-all">
                         <h3 className="font-serif font-bold text-lg mb-3 text-primary">Do I need prior experience?</h3>
