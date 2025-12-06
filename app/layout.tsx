@@ -10,8 +10,11 @@ const cinzel = Cinzel({ subsets: ["latin"], variable: "--font-cinzel" });
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: "Candle Elementals | Premium Handcrafted Candles",
-  description: "Experience the luxury of 100% Soy Wax and IFRA-Certified Premium Fragrance candles.",
+  title: {
+    default: "Candle Elementals | Premium Handcrafted Candles",
+    template: "%s | Candle Elementals",
+  },
+  description: "Handcrafted soy candles and premium workshops by Eda Gaş. Experience the serenity of nature in your home with our IFRA-certified fragrances.",
 };
 
 export default function RootLayout({
