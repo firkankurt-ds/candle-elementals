@@ -33,8 +33,8 @@ export default function Footer() {
                             <a href="https://www.instagram.com/candlelementals/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm hover:text-primary transition-colors">
                                 <Instagram className="w-4 h-4" /> @candlelementals
                             </a>
-                            <a href="mailto:info@candleelements.com" className="flex items-center gap-2 text-sm hover:text-primary transition-colors">
-                                <Mail className="w-4 h-4" /> info@candleelements.com
+                            <a href="mailto:info@candlelemantals.com" className="flex items-center gap-2 text-sm hover:text-primary transition-colors">
+                                <Mail className="w-4 h-4" /> info@candlelemantals.com
                             </a>
                             <div className="flex items-center gap-2 text-sm text-secondary-foreground/70">
                                 <MapPin className="w-4 h-4" /> Istanbul, Turkey
@@ -44,7 +44,7 @@ export default function Footer() {
                 </div>
 
                 <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-secondary-foreground/50">
-                    <p>&copy; {currentYear} CandleElements. All rights reserved.</p>
+                    <p>&copy; {currentYear} Candle Elementals. All rights reserved.</p>
                     <p>Designed with elegance.</p>
                 </div>
             </div>

@@ -29,7 +29,7 @@ export default function Hero() {
                     transition={{ duration: 1, delay: 0.2 }}
                 >
                     <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif font-bold tracking-tight mb-6 text-shadow-lg">
-                        Bright Moments with <br className="hidden md:block" /> Pure Handcrafted Work
+                        Bright Moments with <br className="hidden md:block" /> Pure Handcrafted Candles
                     </h1>
                 </motion.div>
 
