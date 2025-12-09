@@ -13,30 +13,59 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_placeholder"
 
 export async function POST(req: Request) {
     try {
-        const { items } = await req.json();
+        const { workshop, quantity, guests, contactInfo } = await req.json();
 
-        if (!items || items.length === 0) {
-            return new NextResponse("No items in checkout", { status: 400 });
+        if (!workshop) {
+            return new NextResponse("Workshop data missing", { status: 400 });
         }
 
-        const line_items = items.map((item: any) => ({
+        // Create line item for the workshop
+        const origin = req.headers.get("origin");
+        const imageUrl = workshop.image.startsWith("http")
+            ? workshop.image
+            : `${origin}${workshop.image}`;
+
+        const line_items = [{
             price_data: {
-                currency: "usd", // Should be TRY if using Iyzico/local currency, but Stripe supports USD/TRY
+                currency: "usd",
                 product_data: {
-                    name: item.title,
-                    images: [item.image], // Note: These must be public URLs for Stripe to show them
+                    name: `Workshop: ${workshop.title}`,
+                    description: `${workshop.date} ${workshop.time} - ${workshop.language}`,
+                    images: [imageUrl],
+                    metadata: {
+                        workshopId: workshop.id,
+                        date: workshop.date,
+                        time: workshop.time
+                    }
                 },
-                unit_amount: Math.round(item.price * 100), // Amount in cents
+                unit_amount: Math.round(workshop.price * 100),
             },
-            quantity: item.quantity,
-        }));
+            quantity: quantity || 1,
+        }];
+
+        // Flatten guest names for metadata (Stripe metadata has limit on keys/values)
+        const guestMetadata: Record<string, string> = {};
+        guests.forEach((name: string, index: number) => {
+            guestMetadata[`guest_${index + 1}`] = name;
+        });
 
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],
             line_items,
             mode: "payment",
+            customer_email: contactInfo?.email,
             success_url: `${req.headers.get("origin")}/?success=true`,
-            cancel_url: `${req.headers.get("origin")}/?canceled=true`,
+            cancel_url: `${req.headers.get("origin")}/workshops?canceled=true`,
+            metadata: {
+                workshopTitle: workshop.title,
+                workshopDate: workshop.date,
+                workshopTime: workshop.time,
+                primaryName: contactInfo?.fullName,
+                primaryPhone: contactInfo?.phone,
+                notes: contactInfo?.notes,
+                language: contactInfo?.language,
+                ...guestMetadata
+            },
         });
 
         return NextResponse.json({ url: session.url });
