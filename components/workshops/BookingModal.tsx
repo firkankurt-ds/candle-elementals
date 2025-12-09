@@ -5,6 +5,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, CheckCircle, AlertCircle, Loader2, User, Phone, Mail, Globe, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Workshop } from "@/lib/data";
+import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
+import "react-phone-number-input/style.css";
+import "@/app/globals.css"; // Ensure global styles are available if needed
 
 interface BookingModalProps {
     workshop: Workshop;
@@ -18,7 +21,7 @@ export default function BookingModal({ workshop, isOpen, onClose }: BookingModal
     const [status, setStatus] = useState<FormStatus>("idle");
     const [guestNames, setGuestNames] = useState<string[]>([""]);
     const [email, setEmail] = useState("");
-    const [phone, setPhone] = useState("+90 ");
+    const [phone, setPhone] = useState<string | undefined>("");
     const [language, setLanguage] = useState("");
     const [notes, setNotes] = useState("");
     const [termsAccepted, setTermsAccepted] = useState(false);
@@ -30,7 +33,7 @@ export default function BookingModal({ workshop, isOpen, onClose }: BookingModal
         if (isOpen) {
             setGuestNames([""]);
             setEmail("");
-            setPhone("+90 ");
+            setPhone("");
             setLanguage("");
             setNotes("");
             setTermsAccepted(false);
@@ -66,30 +69,6 @@ export default function BookingModal({ workshop, isOpen, onClose }: BookingModal
         setGuestNames(newNames);
     };
 
-    const handlePhoneChange = (value: string) => {
-        // Ensure it always starts with +90 
-        let raw = value;
-        if (!raw.startsWith("+90 ")) {
-            // Did user delete the space?
-            if (raw.startsWith("+90")) {
-                raw = "+90 " + raw.substring(3);
-            } else {
-                // Did user delete +90?
-                raw = "+90 ";
-            }
-        }
-
-        // Allow only numbers after prefix
-        const prefix = "+90 ";
-        const rest = raw.substring(prefix.length);
-        const numbersOnly = rest.replace(/[^0-9]/g, "");
-
-        // Max 10 digits
-        if (numbersOnly.length > 10) return;
-
-        setPhone(prefix + numbersOnly);
-    };
-
     const validate = () => {
         const newErrors: Record<string, string> = {};
 
@@ -100,7 +79,13 @@ export default function BookingModal({ workshop, isOpen, onClose }: BookingModal
         });
 
         if (!email.trim() || !/^\S+@\S+\.\S+$/.test(email)) newErrors.email = "Please enter a valid email address.";
-        if (phone.length < 14) newErrors.phone = "Please enter a valid phone number (10 digits).";
+
+        if (!phone) {
+            newErrors.phone = "Please enter a phone number.";
+        } else if (!isValidPhoneNumber(phone)) {
+            newErrors.phone = "Please enter a valid phone number.";
+        }
+
         if (!language) newErrors.language = "Please select a preferred language.";
         if (!termsAccepted) newErrors.termsAccepted = "Please accept the booking terms.";
 
@@ -281,15 +266,17 @@ export default function BookingModal({ workshop, isOpen, onClose }: BookingModal
 
                                             {/* Contact Info Group */}
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                                <div className="space-y-2">
-                                                    <label className="text-xs font-bold uppercase tracking-widest text-gray-400">Phone</label>
-                                                    <div className="relative">
-                                                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                                        <input
-                                                            type="tel"
+                                                <div className="space-y-2 bg-white rounded-lg">
+                                                    <label className="text-xs font-bold uppercase tracking-widest text-gray-400 block mb-1">Phone</label>
+                                                    <div className={`phone-input-container w-full bg-white rounded-lg border ${errors.phone ? "border-red-300 focus-within:border-red-500 ring-red-100" : "border-gray-200 focus-within:border-[#d4af37] focus-within:ring-4 focus-within:ring-[#d4af37]/10"} transition-all`}>
+                                                        <PhoneInput
+                                                            defaultCountry="TR"
+                                                            placeholder="Enter phone number"
                                                             value={phone}
-                                                            onChange={(e) => handlePhoneChange(e.target.value)}
-                                                            className={`w-full pl-11 pr-4 py-4 bg-white rounded-lg border ${errors.phone ? "border-red-300 focus:border-red-500 ring-red-100" : "border-gray-200 focus:border-[#d4af37] ring-[#d4af37]/10"} outline-none focus:ring-4 transition-all text-gray-700`}
+                                                            onChange={setPhone}
+                                                            international
+                                                            countryCallingCodeEditable={false}
+                                                            className="flex items-center w-full h-full px-4 py-3 bg-transparent rounded-lg outline-none"
                                                         />
                                                     </div>
                                                     {errors.phone && <p className="text-xs text-red-500 flex items-center gap-1 mt-1"><AlertCircle className="w-3 h-3" /> {errors.phone}</p>}
