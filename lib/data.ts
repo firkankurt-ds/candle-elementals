@@ -22,6 +22,8 @@ export interface Workshop {
     included: string[];
     language: string;
     ageGroup?: string;
+    totalSeats: number;
+    bookedSeats: number;
 }
 
 export const products: Product[] = [
@@ -94,7 +96,9 @@ export const workshops: Workshop[] = [
         capacity: "12-15 People",
         itemsMade: "3-5 Candles",
         included: ["All Materials", "Snacks", "Tea & Coffee"],
-        language: "Turkish / English"
+        language: "Turkish / English",
+        totalSeats: 15,
+        bookedSeats: 12
     },
     {
         id: "2",
@@ -108,7 +112,9 @@ export const workshops: Workshop[] = [
         capacity: "12-15 People",
         itemsMade: "3-5 Candles",
         included: ["All Materials", "Snacks", "Tea & Coffee"],
-        language: "Turkish / English"
+        language: "Turkish / English",
+        totalSeats: 15,
+        bookedSeats: 8
     },
     {
         id: "3",
@@ -123,6 +129,8 @@ export const workshops: Workshop[] = [
         itemsMade: "3-5 Candles",
         included: ["All Materials", "Snacks", "Juice"],
         language: "Turkish / English",
-        ageGroup: "5-12 Years"
+        ageGroup: "5-12 Years",
+        totalSeats: 15,
+        bookedSeats: 14
     },
 ];

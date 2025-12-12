@@ -18,6 +18,11 @@ interface WorkshopCardProps {
 export default function WorkshopCard({ workshop, index }: WorkshopCardProps) {
     const [isBookingOpen, setIsBookingOpen] = useState(false);
 
+    // Default values if data is missing (fallback)
+    const totalSeats = workshop.totalSeats || 15;
+    const bookedSeats = workshop.bookedSeats || 0;
+    const seatsLeft = totalSeats - bookedSeats;
+
     return (
         <>
             <motion.div
@@ -92,21 +97,46 @@ export default function WorkshopCard({ workshop, index }: WorkshopCardProps) {
                         </div>
                     </div>
 
-                    {/* Footer */}
-                    <div className="flex items-center justify-between mt-auto pt-6 border-t border-border/60">
+                    {/* Footer - Price & Seats */}
+                    <div className="flex items-center justify-between mt-auto pt-6 border-t border-border/60 mb-4">
                         <div>
                             <span className="text-xs text-muted-foreground uppercase tracking-wider block mb-0.5">Price / Person</span>
                             <span className="text-2xl font-serif font-medium text-primary">
                                 ${workshop.price}
                             </span>
                         </div>
-                        <Button
-                            onClick={() => setIsBookingOpen(true)}
-                            className="bg-gradient-to-r from-[#cba135] to-[#a88225] hover:from-[#b58e2f] hover:to-[#967421] text-white shadow-md hover:shadow-xl transition-all duration-300 px-8 py-6 rounded-full font-serif font-medium tracking-widest text-xs uppercase"
-                        >
-                            Book Now
-                        </Button>
+
+                        {/* Seat Availability - FOMO */}
+                        <div className="flex flex-col items-end">
+                            <span className="text-xs font-bold text-muted-foreground mb-1">
+                                {seatsLeft > 0 ? (
+                                    <span className={seatsLeft < 5 ? "text-red-500" : "text-green-600"}>
+                                        {seatsLeft} / {workshop.totalSeats} seats left
+                                    </span>
+                                ) : (
+                                    <span className="text-red-600">Sold Out</span>
+                                )}
+                            </span>
+                            {seatsLeft < 5 && seatsLeft > 0 && (
+                                <span className="text-[10px] uppercase tracking-widest font-bold text-white bg-red-500 px-2 py-0.5 rounded-full animate-pulse">
+                                    Almost Full
+                                </span>
+                            )}
+                        </div>
                     </div>
+
+                    <Button
+                        onClick={() => setIsBookingOpen(true)}
+                        disabled={seatsLeft === 0}
+                        className={`w-full text-white shadow-md hover:shadow-xl transition-all duration-300 py-6 rounded-full font-serif font-medium tracking-widest text-xs uppercase
+                                ${seatsLeft === 0
+                                ? "bg-gray-400 cursor-not-allowed hover:bg-gray-400"
+                                : "bg-gradient-to-r from-[#cba135] to-[#a88225] hover:from-[#b58e2f] hover:to-[#967421]"
+                            }
+                            `}
+                    >
+                        {seatsLeft === 0 ? "Join Waitlist" : "Book Now"}
+                    </Button>
                 </div>
             </motion.div>
 
