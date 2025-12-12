@@ -98,7 +98,7 @@ export default function WorkshopCard({ workshop, index }: WorkshopCardProps) {
                     </div>
 
                     {/* Footer - Price & Seats */}
-                    <div className="flex items-center justify-between mt-auto pt-6 border-t border-border/60 mb-4">
+                    <div className="flex items-center justify-between mt-auto pt-6 border-t border-border/60 mb-6">
                         <div>
                             <span className="text-xs text-muted-foreground uppercase tracking-wider block mb-0.5">Price / Person</span>
                             <span className="text-2xl font-serif font-medium text-primary">
@@ -108,18 +108,18 @@ export default function WorkshopCard({ workshop, index }: WorkshopCardProps) {
 
                         {/* Seat Availability - FOMO */}
                         <div className="flex flex-col items-end">
-                            <span className="text-xs font-bold text-muted-foreground mb-1">
+                            <span className="text-xs font-medium text-muted-foreground mb-1.5">
                                 {seatsLeft > 0 ? (
-                                    <span className={seatsLeft < 5 ? "text-red-500" : "text-green-600"}>
+                                    <span className={seatsLeft / totalSeats <= 0.2 ? "text-amber-600 font-semibold" : "text-green-700"}>
                                         {seatsLeft} / {workshop.totalSeats} seats left
                                     </span>
                                 ) : (
-                                    <span className="text-red-600">Sold Out</span>
+                                    <span className="text-red-700 font-medium">Sold Out</span>
                                 )}
                             </span>
-                            {seatsLeft < 5 && seatsLeft > 0 && (
-                                <span className="text-[10px] uppercase tracking-widest font-bold text-white bg-red-500 px-2 py-0.5 rounded-full animate-pulse">
-                                    Almost Full
+                            {seatsLeft > 0 && (seatsLeft / totalSeats <= 0.2) && (
+                                <span className="text-[10px] uppercase tracking-widest font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-sm">
+                                    Final Seats
                                 </span>
                             )}
                         </div>
@@ -128,14 +128,14 @@ export default function WorkshopCard({ workshop, index }: WorkshopCardProps) {
                     <Button
                         onClick={() => setIsBookingOpen(true)}
                         disabled={seatsLeft === 0}
-                        className={`w-full text-white shadow-md hover:shadow-xl transition-all duration-300 py-6 rounded-full font-serif font-medium tracking-widest text-xs uppercase
+                        className={`w-full shadow-lg hover:shadow-xl transition-all duration-500 py-6 rounded-md font-serif font-bold tracking-widest text-xs uppercase
                                 ${seatsLeft === 0
-                                ? "bg-gray-400 cursor-not-allowed hover:bg-gray-400"
-                                : "bg-gradient-to-r from-[#cba135] to-[#a88225] hover:from-[#b58e2f] hover:to-[#967421]"
+                                ? "bg-stone-200 text-stone-500 cursor-not-allowed hover:bg-stone-200"
+                                : "bg-[#1a1a1a] text-white hover:bg-[#333] border border-transparent hover:border-primary/30"
                             }
                             `}
                     >
-                        {seatsLeft === 0 ? "Join Waitlist" : "Book Now"}
+                        {seatsLeft === 0 ? "Join Waitlist" : "Reserve Your Spot"}
                     </Button>
                 </div>
             </motion.div>

@@ -1,21 +1,59 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useState, useMemo } from "react";
 import WorkshopCard from "@/components/workshops/WorkshopCard";
 import WorkshopCalendar from "@/components/workshops/WorkshopCalendar";
 import PaymentStatusHandler from "@/components/workshops/PaymentStatusHandler";
-import { workshops } from "@/lib/data";
+import { workshops, Workshop } from "@/lib/data";
+import { ChevronDown, ChevronUp, MapPin, Calendar as CalendarIcon, Clock } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 export default function WorkshopsPage() {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
     // Get unique dates for the calendar
     const workshopDates = workshops.map(w => new Date(w.date));
 
-    // Filter workshops
-    const filteredWorkshops = selectedDate
-        ? workshops.filter(w => new Date(w.date).toDateString() === selectedDate.toDateString())
-        : workshops;
+    // Logic: If a date is selected, show workshops for that date.
+    // If NO workshops on that date (or none selected initially), find the nearest upcoming workshop(s).
+    // Actually, the calendar filter usually implies filtering strictly. 
+    // BUT the user asked: "Let's say today is December 13th and there are no workshops today. The workshop pages for the nearest date should be listed."
+    // So if I pick a date in the calendar and it has NO workshops (which shouldn't happen if I only disable non-workshop dates, but if I allow clicking empty dates...)
+    // The current calendar implementation ONLY allows clicking dates WITH workshops.
+    // So if I click a date, it HAS workshops.
+    // However, if the user means "When I first land on the page" or "If I pick a date that is empty (logic change needed in Cal)", 
+    // Let's assume the calendar triggers selection.
+
+    // Let's Refine: The user wants "Upcoming Workshops" list to be smart.
+    // If selectedDate is null, show all upcoming? Or just nearest?
+    // Let's show ALL upcoming by default, sorted by date.
+    // If selectedDate is set, show strictly that date.
+
+    // WAIT, User said: "Workshops that are clicked on the calendar should open. Let's say today is December 13th and there are no workshops today. The workshop pages for the nearest date should be listed."
+    // This implies if I enter the page today (Dec 13) and there are none, show the next one.
+    // Since we are mocking "Today" as Dec 13 in the example, let's just make the list smart.
+
+    const displayedWorkshops = useMemo(() => {
+        if (selectedDate) {
+            const exactMatches = workshops.filter(w => new Date(w.date).toDateString() === selectedDate.toDateString());
+            if (exactMatches.length > 0) return exactMatches;
+
+            // Fallback: If selected date has no workshops (if we allowed clicking empty dates), search forward
+            // Finding next available workshop after selectedDate
+            return workshops
+                .filter(w => new Date(w.date) > selectedDate)
+                .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+                .slice(0, 3); // Show top 3 nearest
+        }
+
+        // Default: Sort all by date, nearest first
+        return [...workshops].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    }, [selectedDate]);
+
+    // Grouping for the list view if distinct dates? 
+    // For simplicity, just listing them elegantly as requested.
 
     return (
         <div className="pt-24 pb-20 container mx-auto px-4 md:px-6">
@@ -24,57 +62,121 @@ export default function WorkshopsPage() {
             </Suspense>
 
             <div className="text-center max-w-3xl mx-auto mb-12">
-                <h1 className="text-4xl md:text-5xl font-serif font-bold mb-6">
+                <h1 className="text-4xl md:text-5xl font-serif font-bold mb-6 text-foreground">
                     The Art of Candle Making
                 </h1>
-                <p className="text-muted-foreground text-lg leading-relaxed mb-8">
+                <p className="text-muted-foreground text-lg leading-relaxed mb-10">
                     Join us for an intimate, hands-on experience. Learn the secrets of 100% Soy Wax crafting and strict IFRA fragrance standards from our master artisans.
                 </p>
 
-                {/* Calendar Section */}
-                <div className="mb-12">
-                    <WorkshopCalendar
-                        dates={workshopDates}
-                        selectedDate={selectedDate}
-                        onDateSelect={setSelectedDate}
-                    />
+                {/* Collapsible Calendar Section */}
+                <div className="mb-10 flex flex-col items-center">
+                    <button
+                        onClick={() => setIsCalendarOpen(!isCalendarOpen)}
+                        className="flex items-center gap-2 px-6 py-3 bg-white border border-border/60 shadow-sm rounded-full text-sm font-medium hover:bg-secondary/20 transition-all duration-300 group"
+                    >
+                        <CalendarIcon className="w-4 h-4 text-primary" />
+                        <span>{selectedDate ? selectedDate.toLocaleDateString() : "View Workshop Calendar"}</span>
+                        {isCalendarOpen ? (
+                            <ChevronUp className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                        ) : (
+                            <ChevronDown className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                        )}
+                    </button>
+
+                    <AnimatePresence>
+                        {isCalendarOpen && (
+                            <motion.div
+                                initial={{ height: 0, opacity: 0, y: -10 }}
+                                animate={{ height: "auto", opacity: 1, y: 0 }}
+                                exit={{ height: 0, opacity: 0, y: -10 }}
+                                transition={{ duration: 0.3, ease: "easeInOut" }}
+                                className="overflow-hidden w-full max-w-sm mt-4 z-20 relative"
+                            >
+                                <WorkshopCalendar
+                                    dates={workshopDates}
+                                    selectedDate={selectedDate}
+                                    onDateSelect={(date) => {
+                                        setSelectedDate(date);
+                                        // Optional: Close calendar on selection if desired, but user might want to browse. keeping open.
+                                    }}
+                                />
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
 
-                {/* Compact Schedule List */}
-                <div className="max-w-xl mx-auto bg-secondary/20 rounded-xl p-6 border border-border/40 text-left">
-                    <h3 className="font-serif font-bold text-lg mb-4 text-center">
-                        {selectedDate ? `Schedule for ${selectedDate.toLocaleDateString()}` : "Upcoming Workshops"}
+                {/* Premium Upcoming List */}
+                <div className="max-w-2xl mx-auto text-left">
+                    <h3 className="font-serif font-bold text-xl mb-6 text-center text-primary/90 flex items-center justify-center gap-2">
+                        <span className="h-px w-8 bg-border"></span>
+                        {selectedDate ? `Availability from ${selectedDate.toLocaleDateString()}` : "Upcoming Workshops"}
+                        <span className="h-px w-8 bg-border"></span>
                     </h3>
-                    <div className="space-y-3">
-                        {filteredWorkshops.length > 0 ? (
-                            filteredWorkshops.map(w => (
-                                <div key={w.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 bg-white/60 rounded-lg hover:bg-white transition-colors border border-transparent hover:border-border/60">
-                                    <div className="flex items-center gap-3">
-                                        <div className="bg-primary/10 text-primary font-bold text-xs uppercase px-2 py-1 rounded">
-                                            {new Date(w.date).getDate()} {new Date(w.date).toLocaleString('default', { month: 'short' })}
+
+                    <div className="grid gap-4">
+                        {displayedWorkshops.length > 0 ? (
+                            displayedWorkshops.map((w, i) => {
+                                const seatsLeft = w.totalSeats - w.bookedSeats;
+                                const isSoldOut = seatsLeft <= 0;
+                                const isAlmostFull = !isSoldOut && (seatsLeft / w.totalSeats <= 0.2);
+
+                                return (
+                                    <div key={w.id} className="group relative bg-white/40 backdrop-blur-sm border border-border/50 rounded-xl p-5 hover:bg-white hover:shadow-lg hover:border-primary/20 transition-all duration-500 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+
+                                        <div className="flex items-start gap-4">
+                                            {/* Date Box */}
+                                            <div className="flex flex-col items-center justify-center bg-stone-100 min-w-[60px] h-[60px] rounded-lg border border-stone-200">
+                                                <span className="text-xs font-bold uppercase text-stone-500">{new Date(w.date).toLocaleString('default', { month: 'short' })}</span>
+                                                <span className="text-xl font-serif font-bold text-stone-800">{new Date(w.date).getDate()}</span>
+                                            </div>
+
+                                            <div>
+                                                <h4 className="font-serif font-bold text-lg text-foreground group-hover:text-primary transition-colors">{w.title}</h4>
+                                                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-sm text-muted-foreground">
+                                                    <div className="flex items-center gap-1.5">
+                                                        <Clock className="w-3.5 h-3.5" />
+                                                        <span>{w.time}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-1.5">
+                                                        <MapPin className="w-3.5 h-3.5" />
+                                                        <span>{w.location}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <span className="font-medium text-sm text-foreground/90">{w.title}</span>
+
+                                        <div className="flex items-center justify-between w-full sm:w-auto gap-4 pl-[76px] sm:pl-0">
+                                            <div className="flex flex-col items-end">
+                                                {isSoldOut ? (
+                                                    <span className="text-xs font-bold text-red-500 uppercase tracking-wider">Sold Out</span>
+                                                ) : (
+                                                    <>
+                                                        <span className="font-serif font-medium text-lg">${w.price}</span>
+                                                        {isAlmostFull && <span className="text-[10px] text-amber-600 font-bold uppercase tracking-wide">Final Seats</span>}
+                                                    </>
+                                                )}
+                                            </div>
+                                            {/* Simple visual cue arrow or button */}
+                                            <div className={`w-8 h-8 rounded-full flex items-center justify-center border transition-colors duration-300 ${isSoldOut ? "border-gray-200 text-gray-300" : "border-primary/30 text-primary group-hover:bg-primary group-hover:text-white"}`}>
+                                                <ChevronDown className={`w-4 h-4 -rotate-90 ${isSoldOut ? "" : "transform group-hover:translate-x-0.5 transition-transform"}`} />
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div className="flex items-center gap-3 text-xs text-muted-foreground ml-11 sm:ml-0">
-                                        <span>{w.time}</span>
-                                        {w.totalSeats > 0 && (w.totalSeats - w.bookedSeats) < 5 && (w.totalSeats - w.bookedSeats) > 0 && (
-                                            <span className="text-red-500 font-bold hidden sm:inline-block">Almost Full</span>
-                                        )}
-                                        {(w.totalSeats - w.bookedSeats) === 0 && (
-                                            <span className="text-red-600 font-bold hidden sm:inline-block">Sold Out</span>
-                                        )}
-                                    </div>
-                                </div>
-                            ))
+                                )
+                            })
                         ) : (
-                            <p className="text-center text-muted-foreground text-sm py-4">No workshops found for this date.</p>
+                            <div className="text-center py-10 bg-secondary/10 rounded-xl border border-dashed border-border">
+                                <p className="text-muted-foreground">No workshops found for this selection.</p>
+                                <button onClick={() => setSelectedDate(null)} className="text-primary text-sm font-bold mt-2 hover:underline">View All Upcoming</button>
+                            </div>
                         )}
                     </div>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-24">
-                {filteredWorkshops.map((workshop, index) => (
+                {displayedWorkshops.map((workshop, index) => (
                     <WorkshopCard key={workshop.id} workshop={workshop} index={index} />
                 ))}
             </div>
