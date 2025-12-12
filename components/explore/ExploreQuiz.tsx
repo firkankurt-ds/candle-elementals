@@ -174,6 +174,16 @@ export default function ExploreQuiz() {
                                 </button>
                             ))}
                         </div>
+
+                        <div className="mt-12 flex justify-center opacity-40">
+                            <Image
+                                src="/brand-symbol.png"
+                                alt="Elemental Symbol"
+                                width={60}
+                                height={60}
+                                className="object-contain"
+                            />
+                        </div>
                     </motion.div>
                 ) : (
                     <motion.div

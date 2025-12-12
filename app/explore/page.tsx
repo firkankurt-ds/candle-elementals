@@ -17,7 +17,7 @@ export default function ExplorePage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
-                    className="text-center mb-12"
+                    className="text-center mb-6"
                 >
                     <span className="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4 block">
                         Discover Your Essence
