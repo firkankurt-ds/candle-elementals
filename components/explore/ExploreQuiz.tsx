@@ -175,15 +175,7 @@ export default function ExploreQuiz() {
                             ))}
                         </div>
 
-                        <div className="mt-12 w-full max-w-lg mx-auto flex justify-center opacity-80">
-                            <Image
-                                src="/brand-symbol.png"
-                                alt="Elemental Symbol"
-                                width={500}
-                                height={500}
-                                className="object-contain w-full h-auto mix-blend-multiply"
-                            />
-                        </div>
+
                     </motion.div>
                 ) : (
                     <motion.div
