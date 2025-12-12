@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 export default function WorkshopsPage() {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+    const [isListOpen, setIsListOpen] = useState(false);
 
     // Get unique dates for the calendar
     const workshopDates = workshops.map(w => new Date(w.date));
@@ -106,72 +107,93 @@ export default function WorkshopsPage() {
                     </AnimatePresence>
                 </div>
 
-                {/* Premium Upcoming List */}
-                <div className="max-w-2xl mx-auto text-left">
-                    <h3 className="font-serif font-bold text-xl mb-6 text-center text-primary/90 flex items-center justify-center gap-2">
-                        <span className="h-px w-8 bg-border"></span>
-                        {selectedDate ? `Availability from ${selectedDate.toLocaleDateString()}` : "Upcoming Workshops"}
-                        <span className="h-px w-8 bg-border"></span>
-                    </h3>
-
-                    <div className="grid gap-4">
-                        {displayedWorkshops.length > 0 ? (
-                            displayedWorkshops.map((w, i) => {
-                                const seatsLeft = w.totalSeats - w.bookedSeats;
-                                const isSoldOut = seatsLeft <= 0;
-                                const isAlmostFull = !isSoldOut && (seatsLeft / w.totalSeats <= 0.2);
-
-                                return (
-                                    <div key={w.id} className="group relative bg-white/40 backdrop-blur-sm border border-border/50 rounded-xl p-5 hover:bg-white hover:shadow-lg hover:border-primary/20 transition-all duration-500 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-
-                                        <div className="flex items-start gap-4">
-                                            {/* Date Box */}
-                                            <div className="flex flex-col items-center justify-center bg-stone-100 min-w-[60px] h-[60px] rounded-lg border border-stone-200">
-                                                <span className="text-xs font-bold uppercase text-stone-500">{new Date(w.date).toLocaleString('default', { month: 'short' })}</span>
-                                                <span className="text-xl font-serif font-bold text-stone-800">{new Date(w.date).getDate()}</span>
-                                            </div>
-
-                                            <div>
-                                                <h4 className="font-serif font-bold text-lg text-foreground group-hover:text-primary transition-colors">{w.title}</h4>
-                                                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-sm text-muted-foreground">
-                                                    <div className="flex items-center gap-1.5">
-                                                        <Clock className="w-3.5 h-3.5" />
-                                                        <span>{w.time}</span>
-                                                    </div>
-                                                    <div className="flex items-center gap-1.5">
-                                                        <MapPin className="w-3.5 h-3.5" />
-                                                        <span>{w.location}</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex items-center justify-between w-full sm:w-auto gap-4 pl-[76px] sm:pl-0">
-                                            <div className="flex flex-col items-end">
-                                                {isSoldOut ? (
-                                                    <span className="text-xs font-bold text-red-500 uppercase tracking-wider">Sold Out</span>
-                                                ) : (
-                                                    <>
-                                                        <span className="font-serif font-medium text-lg">${w.price}</span>
-                                                        {isAlmostFull && <span className="text-[10px] text-amber-600 font-bold uppercase tracking-wide">Final Seats</span>}
-                                                    </>
-                                                )}
-                                            </div>
-                                            {/* Simple visual cue arrow or button */}
-                                            <div className={`w-8 h-8 rounded-full flex items-center justify-center border transition-colors duration-300 ${isSoldOut ? "border-gray-200 text-gray-300" : "border-primary/30 text-primary group-hover:bg-primary group-hover:text-white"}`}>
-                                                <ChevronDown className={`w-4 h-4 -rotate-90 ${isSoldOut ? "" : "transform group-hover:translate-x-0.5 transition-transform"}`} />
-                                            </div>
-                                        </div>
-                                    </div>
-                                )
-                            })
+                {/* Collapsible Upcoming List */}
+                <div className="mb-12 flex flex-col items-center">
+                    <button
+                        onClick={() => setIsListOpen(!isListOpen)}
+                        className="flex items-center gap-2 px-6 py-3 bg-white border border-border/60 shadow-sm rounded-full text-sm font-medium hover:bg-secondary/20 transition-all duration-300 group"
+                    >
+                        <Clock className="w-4 h-4 text-primary" />
+                        <span>{selectedDate ? `Availability: ${selectedDate.toLocaleDateString()}` : "View Upcoming Workshops"}</span>
+                        {isListOpen ? (
+                            <ChevronUp className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
                         ) : (
-                            <div className="text-center py-10 bg-secondary/10 rounded-xl border border-dashed border-border">
-                                <p className="text-muted-foreground">No workshops found for this selection.</p>
-                                <button onClick={() => setSelectedDate(null)} className="text-primary text-sm font-bold mt-2 hover:underline">View All Upcoming</button>
-                            </div>
+                            <ChevronDown className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
                         )}
-                    </div>
+                    </button>
+
+                    <AnimatePresence>
+                        {isListOpen && (
+                            <motion.div
+                                initial={{ height: 0, opacity: 0, y: -10 }}
+                                animate={{ height: "auto", opacity: 1, y: 0 }}
+                                exit={{ height: 0, opacity: 0, y: -10 }}
+                                transition={{ duration: 0.3, ease: "easeInOut" }}
+                                className="overflow-hidden w-full max-w-2xl mt-6 z-20 relative"
+                            >
+                                <div className="max-w-2xl mx-auto text-left">
+                                    <div className="grid gap-4">
+                                        {displayedWorkshops.length > 0 ? (
+                                            displayedWorkshops.map((w, i) => {
+                                                const seatsLeft = w.totalSeats - w.bookedSeats;
+                                                const isSoldOut = seatsLeft <= 0;
+                                                const isAlmostFull = !isSoldOut && (seatsLeft / w.totalSeats <= 0.2);
+
+                                                return (
+                                                    <div key={w.id} className="group relative bg-white/40 backdrop-blur-sm border border-border/50 rounded-xl p-5 hover:bg-white hover:shadow-lg hover:border-primary/20 transition-all duration-500 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+
+                                                        <div className="flex items-start gap-4">
+                                                            {/* Date Box */}
+                                                            <div className="flex flex-col items-center justify-center bg-stone-100 min-w-[60px] h-[60px] rounded-lg border border-stone-200">
+                                                                <span className="text-xs font-bold uppercase text-stone-500">{new Date(w.date).toLocaleString('default', { month: 'short' })}</span>
+                                                                <span className="text-xl font-serif font-bold text-stone-800">{new Date(w.date).getDate()}</span>
+                                                            </div>
+
+                                                            <div>
+                                                                <h4 className="font-serif font-bold text-lg text-foreground group-hover:text-primary transition-colors">{w.title}</h4>
+                                                                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-sm text-muted-foreground">
+                                                                    <div className="flex items-center gap-1.5">
+                                                                        <Clock className="w-3.5 h-3.5" />
+                                                                        <span>{w.time}</span>
+                                                                    </div>
+                                                                    <div className="flex items-center gap-1.5">
+                                                                        <MapPin className="w-3.5 h-3.5" />
+                                                                        <span>{w.location}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="flex items-center justify-between w-full sm:w-auto gap-4 pl-[76px] sm:pl-0">
+                                                            <div className="flex flex-col items-end">
+                                                                {isSoldOut ? (
+                                                                    <span className="text-xs font-bold text-red-500 uppercase tracking-wider">Sold Out</span>
+                                                                ) : (
+                                                                    <>
+                                                                        <span className="font-serif font-medium text-lg">${w.price}</span>
+                                                                        {isAlmostFull && <span className="text-[10px] text-amber-600 font-bold uppercase tracking-wide">Final Seats</span>}
+                                                                    </>
+                                                                )}
+                                                            </div>
+                                                            {/* Simple visual cue arrow or button */}
+                                                            <div className={`w-8 h-8 rounded-full flex items-center justify-center border transition-colors duration-300 ${isSoldOut ? "border-gray-200 text-gray-300" : "border-primary/30 text-primary group-hover:bg-primary group-hover:text-white"}`}>
+                                                                <ChevronDown className={`w-4 h-4 -rotate-90 ${isSoldOut ? "" : "transform group-hover:translate-x-0.5 transition-transform"}`} />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )
+                                            })
+                                        ) : (
+                                            <div className="text-center py-10 bg-secondary/10 rounded-xl border border-dashed border-border">
+                                                <p className="text-muted-foreground">No workshops found for this selection.</p>
+                                                <button onClick={() => setSelectedDate(null)} className="text-primary text-sm font-bold mt-2 hover:underline">View All Upcoming</button>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
             </div>
 
