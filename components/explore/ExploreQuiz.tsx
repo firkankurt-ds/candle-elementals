@@ -175,12 +175,12 @@ export default function ExploreQuiz() {
                             ))}
                         </div>
 
-                        <div className="mt-12 flex justify-center opacity-40">
+                        <div className="mt-12 flex justify-center opacity-80">
                             <Image
                                 src="/brand-symbol.png"
                                 alt="Elemental Symbol"
-                                width={60}
-                                height={60}
+                                width={140}
+                                height={140}
                                 className="object-contain"
                             />
                         </div>
