@@ -167,10 +167,10 @@ export default function ExploreQuiz() {
                                 <button
                                     key={option.value}
                                     onClick={() => handleAnswer(option.value)}
-                                    className="group relative overflow-hidden bg-white/60 backdrop-blur-md border border-stone-200 hover:border-primary/50 text-stone-800 p-6 rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-[1.02] text-left flex items-center justify-between"
+                                    className="group relative overflow-hidden bg-transparent border border-stone-300 hover:border-stone-800 text-stone-600 hover:text-stone-900 p-6 rounded-none transition-all duration-300 hover:bg-stone-50 text-left flex items-center justify-between"
                                 >
-                                    <span className="font-serif text-lg font-medium">{option.label}</span>
-                                    <ArrowRight className="w-5 h-5 text-primary/0 group-hover:text-primary transition-all duration-300 transform -translate-x-4 group-hover:translate-x-0" />
+                                    <span className="font-serif text-xl tracking-wide">{option.label}</span>
+                                    <ArrowRight className="w-5 h-5 opacity-0 group-hover:opacity-100 transition-all duration-300 transform -translate-x-4 group-hover:translate-x-0" />
                                 </button>
                             ))}
                         </div>
@@ -181,48 +181,47 @@ export default function ExploreQuiz() {
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.8, ease: "easeOut" }}
-                        className="w-full bg-white/40 backdrop-blur-xl border border-white/50 rounded-2xl p-8 md:p-12 shadow-2xl flex flex-col md:flex-row gap-10 items-center"
+                        className="w-full max-w-5xl bg-[#faf9f6] p-4 md:p-8 flex flex-col md:flex-row gap-12 items-center"
                     >
-                        {/* Image Side */}
-                        <div className="w-full md:w-1/2 relative aspect-square rounded-xl overflow-hidden shadow-lg group">
+                        {/* Image Side - Simple & Clean */}
+                        <div className="w-full md:w-1/2 relative aspect-square bg-[#f0f0f0]">
                             <Image
                                 src={result.image}
                                 alt={result.name}
                                 fill
-                                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                className="object-cover mix-blend-multiply"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                         </div>
 
                         {/* Content Side */}
-                        <div className="w-full md:w-1/2 text-left space-y-6">
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest border border-primary/20">
+                        <div className="w-full md:w-1/2 text-left space-y-8">
+                            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-stone-800 text-stone-800 text-[10px] font-bold uppercase tracking-[0.2em]">
                                 <Sparkles className="w-3 h-3" />
                                 <span>Perfect Match</span>
                             </div>
 
                             <div>
-                                <h2 className="text-4xl font-serif font-bold text-foreground mb-2">{result.name}</h2>
-                                <p className="text-primary font-medium text-xl">${result.price}</p>
+                                <h2 className="text-5xl font-serif font-bold text-stone-900 mb-3">{result.name}</h2>
+                                <p className="text-stone-600 text-2xl font-serif">${result.price}</p>
                             </div>
 
-                            <p className="text-muted-foreground text-lg leading-relaxed border-l-2 border-primary/30 pl-4">
+                            <p className="text-stone-600 text-lg leading-relaxed font-light border-l border-stone-300 pl-6 py-2">
                                 {result.description}
                             </p>
 
-                            <div className="pt-6 flex flex-col sm:flex-row gap-4">
+                            <div className="pt-4 flex gap-4">
                                 <Link href={`/products`} className="flex-1">
-                                    <Button size="lg" className="w-full h-12 text-sm uppercase tracking-widest font-bold">
+                                    <Button
+                                        className="w-full h-14 rounded-none bg-stone-900 text-white border border-stone-900 hover:bg-white hover:text-stone-900 text-xs uppercase tracking-[0.2em] font-bold transition-all duration-300"
+                                    >
                                         Shop This Candle
                                     </Button>
                                 </Link>
                                 <Button
                                     variant="outline"
-                                    size="lg"
                                     onClick={resetQuiz}
-                                    className="flex-1 h-12 text-sm uppercase tracking-widest gap-2 bg-transparent hover:bg-white/50"
+                                    className="flex-1 h-14 rounded-none bg-transparent text-stone-900 border border-stone-900 hover:bg-stone-900 hover:text-white text-xs uppercase tracking-[0.2em] font-bold transition-all duration-300"
                                 >
-                                    <RefreshCcw className="w-4 h-4" />
                                     Start Over
                                 </Button>
                             </div>
