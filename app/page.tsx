@@ -1,4 +1,5 @@
 import Hero from "@/components/home/Hero";
+import Highlights from "@/components/home/Highlights";
 
 export default function Home() {
   return (
@@ -14,6 +15,8 @@ export default function Home() {
           <a href="/about" className="text-primary hover:underline underline-offset-4 text-sm font-medium uppercase tracking-widest">
             Read Our Story
           </a>
+
+          <Highlights />
         </div>
       </section>
     </>
