@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cinzel, Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/shared/Header";
@@ -15,6 +15,16 @@ export const metadata: Metadata = {
     template: "%s | Candle Elementals",
   },
   description: "Handcrafted soy candles and premium workshops by Eda Gaş. Experience the serenity of nature in your home with our IFRA-certified fragrances.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fdfdfc" },
+    { media: "(prefers-color-scheme: dark)", color: "#1a1a1a" },
+  ],
 };
 
 export default function RootLayout({
