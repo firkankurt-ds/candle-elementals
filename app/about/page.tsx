@@ -15,7 +15,7 @@ export default function AboutPage() {
                     transition={{ duration: 0.8 }}
                     className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold mb-8"
                 >
-                    Crafting Light, Creating Memories
+                    Scientific Creativity
                 </motion.h1>
                 <motion.p
                     initial={{ opacity: 0, y: 20 }}
@@ -23,7 +23,7 @@ export default function AboutPage() {
                     transition={{ duration: 0.8, delay: 0.2 }}
                     className="text-lg md:text-xl text-muted-foreground leading-relaxed"
                 >
-                    Candle Elementals is born from a passion for purity and design. Founded by Eda Gaş, our mission is to bring the serenity of nature into your home through meticulously handcrafted soy candles.
+                    Born in Istanbul, Candle Elementals is where the precision of science meets the warmth of hand-poured love. Founded by Eda Gaş, our mission is to bring natural, clean, and ethically crafted light into your space.
                 </motion.p>
             </div>
 
@@ -53,11 +53,11 @@ export default function AboutPage() {
                     >
                         <h2 className="text-3xl md:text-4xl font-serif font-bold">The Artisan Touch</h2>
                         <p className="text-muted-foreground text-lg leading-relaxed">
-                            Every candle is a piece of art, poured by hand with precision and care. Eda Gaş brings years of expertise to every creation, ensuring that each product not only looks beautiful but burns cleanly and evenly.
+                            Every candle is an elemental fusion of science and art, poured by hand in Istanbul. We believe in the meticulous selection of ingredients—natural soy wax, phthalate-free and paraffin-free—to ensure each creation burns not just beautifully, but safely.
                         </p>
                         <div className="p-4 border border-primary/20 bg-primary/5 rounded-md my-4">
                             <p className="text-primary italic text-lg leading-relaxed">
-                                "It's not just about making a candle; it's about curating an atmosphere. I want my workshops to be a place where people can disconnect from the noise and reconnect with their creativity."
+                                "Hand-poured with science and love. My goal is to create more than just a candle—it's about a scientific approach to creativity that allows people to disconnect from the noise and reconnect with themselves."
                             </p>
                         </div>
                     </motion.div>
@@ -82,7 +82,7 @@ export default function AboutPage() {
                                     <div>
                                         <h3 className="text-xl font-bold mb-2">100% Natural Soy Wax</h3>
                                         <p className="text-secondary-foreground/80">
-                                            Biodegradable, renewable, and free from toxins. Soy wax burns slower and cooler than paraffin, giving you a longer-lasting candle.
+                                            Biodegradable, renewable, and clean. Our 100% natural soy wax burns slower and cooler than paraffin, offering a toxin-free experience born in Istanbul.
                                         </p>
                                     </div>
                                 </div>
@@ -91,7 +91,7 @@ export default function AboutPage() {
                                     <div>
                                         <h3 className="text-xl font-bold mb-2">IFRA-Certified Premium Fragrances</h3>
                                         <p className="text-secondary-foreground/80">
-                                            We adhere to the strictest safety standards set by the International Fragrance Association. non-toxic, phthalate-free, and safe for your home.
+                                            We adhere to the strictest safety standards. All our fragrances are IFRA-certified, phthalate-free, and paraffin-free, ensuring a premium scent experience without compromise.
                                         </p>
                                     </div>
                                 </div>

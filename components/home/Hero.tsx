@@ -39,7 +39,7 @@ export default function Hero() {
                     transition={{ duration: 1, delay: 0.5 }}
                 >
                     <p className="text-lg md:text-xl lg:text-2xl font-light text-white/90 mb-10 max-w-2xl mx-auto leading-relaxed">
-                        Experience the elegance of 100% Soy Wax & IFRA-Certified Premium Fragrances. Handcrafted to perfection.
+                        Natural & Clean Soy Wax Candles. Phthalate-free • Paraffin-free. Hand-poured with science and love in Istanbul.
                     </p>
                 </motion.div>
 

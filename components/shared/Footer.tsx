@@ -12,7 +12,7 @@ export default function Footer() {
                     <div className="space-y-4">
                         <h3 className="text-2xl font-serif text-primary">Candle Elementals</h3>
                         <p className="text-secondary-foreground/70 max-w-xs text-sm leading-relaxed">
-                            Crafting memories through scent. 100% Soy Wax, IFRA-Certified Premium Fragrances. Hand-poured with precision and passion.
+                            Natural & Clean Scented Soy Wax Candles. Phthalate-free • Paraffin-free. Hand-poured with science and love in Istanbul.
                         </p>
                     </div>
 
